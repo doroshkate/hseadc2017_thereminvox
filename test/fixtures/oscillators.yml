@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  frequency: 1
+  wave: MyString
+  detune: 1
+
+two:
+  frequency: 1
+  wave: MyString
+  detune: 1
