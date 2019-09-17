@@ -4,25 +4,33 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+/*import PropTypes from 'prop-types'*/
 
-const Hello = props => <div className="component">Hello {props.name}!</div>
+import Hello from '../containers/Hello'
 
-Hello.defaultProps = {
+/*
+const Hello = props => (
+  <div className="component">
+      Hello {props.name}!
+      <Menubar name={ props.name } handleClick={ props.handleClick}
+  </div>*/
+)
+
+/*Hello.defaultProps = {
   name: 'David'
 }
 
 Hello.propTypes = {
   name: PropTypes.string
-}
+}*/
 
 function click() {
-  console.log('Send Help')
+  console.log('Ye')
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Hello name="React" />,
+    <Hello name="React" handleClick={click()} />,
     document.body.appendChild(document.createElement('div'))
   )
 })
