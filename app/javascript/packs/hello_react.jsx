@@ -8,26 +8,6 @@ import ReactDOM from 'react-dom'
 
 import Hello from '../containers/Hello'
 
-/*
-const Hello = props => (
-  <div className="component">
-      Hello {props.name}!
-      <Menubar name={ props.name } handleClick={ props.handleClick}
-  </div>*/
-)
-
-/*Hello.defaultProps = {
-  name: 'David'
-}
-
-Hello.propTypes = {
-  name: PropTypes.string
-}*/
-
-function click() {
-  console.log('Ye')
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <Hello name="React" handleClick={click()} />,
