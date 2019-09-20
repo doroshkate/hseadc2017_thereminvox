@@ -27,7 +27,7 @@ export default class Hello extends React.Component {
         }
       })
     } else if (elementName == 'button') {
-      const color = this.state.button.color == 'red' ? 'blue' : 'red'
+      const buttonColor = this.state.button.color == 'red' ? 'blue' : 'red'
 
       this.setState({
         button: {
@@ -39,14 +39,13 @@ export default class Hello extends React.Component {
 
   render() {
     const { name } = this.props
-    const { avater, button } = this.state
+    const { avatar, button } = this.state
 
     return (
       <div>
         Hello {name}!
         <Menubar
           name={name}
-          color={color}
           avatar={avatar}
           button={button}
           handleClick={this.handleClick}

@@ -15,7 +15,7 @@ export default class Avatar extends React.Component {
     //const name = this.props.name
     //const handleClick = this.props.handleClick
 
-    const { name, handleClick } = this.props
+    const { name, color } = this.props
 
     return (
       <div onClick={this.handleClick} style={{ color: color }}>

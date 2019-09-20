@@ -1,5 +1,5 @@
 import React from 'react'
-import Avartar from './Avatar'
+import Avatar from './Avatar'
 import Button from './Button'
 
 export default class Menubar extends React.Component {
