@@ -9,7 +9,7 @@ export default class Thereminvox extends React.Component {
     const audioContext = new (window.AudioContext ||
       window.webkitAudioContext)()
     let oscillator = audioContext.createOscillator()
-    oscillator.type = 'square'
+    oscillator.type = 'sine'
 
     let analyser = audioContext.createAnalyser()
     analyser.fftsize = 2048
@@ -30,7 +30,7 @@ export default class Thereminvox extends React.Component {
     this.handleStop = this.handleStop.bind(this)
     this.handleStartOrStopClick = this.handleStartOrStopClick.bind(this)
     this.changeFrequency = this.changeFrequency.bind(this)
-    this.changeDetune = this.this.changeDetune.bind(this)
+    this.changeDetune = this.changeDetune.bind(this)
     this.changeVisualisation = this.changeVisualisation.bind(this)
     this.handleSynthPlay = this.handleSynthPlay.bind(this)
   }
@@ -41,7 +41,6 @@ export default class Thereminvox extends React.Component {
   }
 
   handleMouseMove(e) {
-    //console.log(e.clientX, e.clientY)
     this.setState({
       x: e.clientX,
       y: e.clientY
@@ -76,15 +75,15 @@ export default class Thereminvox extends React.Component {
     )
 
     pattern.start(0)
-    one.Transport.bpm.value = 220
+    Tone.Transport.bpm.value = 220
     Tone.Transport.start()
   }
 
   handleStart() {
-    let { audioContext, oscillator, x, y } = this.state
+    let { audioContext, oscillator, analyser, x, y } = this.state
 
     oscillator = audioContext.createOscillator()
-    oscillator.type = 'square'
+    oscillator.type = 'sine'
     oscillator.frequency.setValueAtTime(x, audioContext.currentTime)
     oscillator.connect(audioContext.destination)
     oscillator.start()
@@ -120,10 +119,10 @@ export default class Thereminvox extends React.Component {
   }
 
   changeVisualisation() {
-    const { analyse, playingr } = this.setState
+    const { analyser, playing } = this.state
 
     if (playing) {
-      const bufferLengh = analyser.frequencyBinCount
+      let bufferLengh = analyser.frequencyBinCount
       let dataArray = new Unit8Array(bufferLengh)
       analyser.getByteTimeDomainData(dataArray)
 
@@ -145,16 +144,20 @@ export default class Thereminvox extends React.Component {
 
     let elements = []
 
-    console.log(state)
-
     if (fftData != undefined) {
       fftData.map(function(fftParam, i) {
         elements.push(
-          <div
-            key={i}
-            className="analyserCol"
-            style={{ height: fftParam + 'px' }}
-          />
+          <div className="analyser">
+            <div
+              key={i}
+              className="analyserCol"
+              style={{
+                width: fftParam + 'px',
+                background: '#C6C6C6',
+                height: '1px'
+              }}
+            />
+          </div>
         )
       })
     }
