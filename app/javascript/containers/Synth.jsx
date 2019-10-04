@@ -174,8 +174,8 @@ export default class Synth extends React.Component {
     this.startSynth = this.startSynth.bind(this)
     this.toggleFilter = this.toggleFilter.bind(this)
     this.toggleFeedbackDelay = this.toggleFeedbackDelay.bind(this)
-    // this.toggleTremolo = this.toggleTremolo.bind(this)
-    // this.toggleDistortion = this.toggleDistortion.bind(this)
+    this.toggleTremolo = this.toggleTremolo.bind(this)
+    this.toggleDistortion = this.toggleDistortion.bind(this)
     this.toggleAutoPanner = this.toggleAutoPanner.bind(this)
     this.toggleAutoWah = this.toggleAutoWah.bind(this)
     this.toggleBitCrusher = this.toggleBitCrusher.bind(this)
@@ -255,6 +255,30 @@ export default class Synth extends React.Component {
 
     this.setState({
       feedbackDelayIsOn: !this.state.feedbackDelayIsOn
+    })
+  }
+
+  toggleTremolo() {
+    if (this.state.tremoloIsOn) {
+      this.state.tremolo.wet.value = 0
+    } else {
+      this.state.tremolo.wet.value = 1
+    }
+
+    this.setState({
+      tremoloIsOn: !this.state.tremoloIsOn
+    })
+  }
+
+  toggleDistortion() {
+    if (this.state.distortionIsOn) {
+      this.state.distortion.wet.value = 0
+    } else {
+      this.state.distortion.wet.value = 1
+    }
+
+    this.setState({
+      distortionIsOn: !this.state.distortionIsOn
     })
   }
 
