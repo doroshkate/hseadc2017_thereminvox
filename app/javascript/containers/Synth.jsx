@@ -174,8 +174,8 @@ export default class Synth extends React.Component {
     this.startSynth = this.startSynth.bind(this)
     this.toggleFilter = this.toggleFilter.bind(this)
     this.toggleFeedbackDelay = this.toggleFeedbackDelay.bind(this)
-    this.toggleTremolo = this.toggleTremolo.bind(this)
-    this.toggleDistortion = this.toggleDistortion.bind(this)
+    // this.toggleTremolo = this.toggleTremolo.bind(this)
+    // this.toggleDistortion = this.toggleDistortion.bind(this)
     this.toggleAutoPanner = this.toggleAutoPanner.bind(this)
     this.toggleAutoWah = this.toggleAutoWah.bind(this)
     this.toggleBitCrusher = this.toggleBitCrusher.bind(this)
@@ -195,7 +195,7 @@ export default class Synth extends React.Component {
   }
 
   startSynth() {
-    let synth = new Tone.Synth()
+    let synth = new Tone.Synth().toMaster()
     synth.chain(
       this.state.autoFilter,
       this.state.feedbackDelay,
