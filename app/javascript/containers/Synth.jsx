@@ -1,5 +1,9 @@
+import _ from 'lodash'
 import React from 'react'
 import Tone from 'tone'
+
+import PlaySwitch from '../components/PlaySwitch'
+import Distortion from '../components/effects/Distortion'
 
 export default class Synth extends React.Component {
   constructor(props) {
@@ -16,7 +20,7 @@ export default class Synth extends React.Component {
         rolloff: -12,
         Q: 1
       }
-    }) //.toMaster()
+    })
 
     let feedbackDelay = new Tone.FeedbackDelay({
       delayTime: '32n',
@@ -26,13 +30,13 @@ export default class Synth extends React.Component {
     let tremolo = new Tone.Tremolo({
       frequency: 3,
       type: 'sine',
-      depth: 2,
-      spread: 180
+      depth: 5,
+      spread: 160
     })
 
     let distortion = new Tone.Distortion({
       distortion: 1,
-      oversample: '4x'
+      oversample: '3x'
     })
 
     let autoPanner = new Tone.AutoPanner({
@@ -128,418 +132,362 @@ export default class Synth extends React.Component {
       type: 'sine'
     })
 
-    this.state = {
-      autoFilter: autoFilter,
-      autoFilterIsOn: false,
-      feedbackDelay: feedbackDelay,
-      feedbackDelayIsOn: false,
-      tremolo: tremolo,
-      tremoloIsOn: false,
-      distortion: distortion,
-      distortionIsOn: false,
-      autoPanner: autoPanner,
-      autoPannerIsOn: false,
-      autoWah: autoWah,
-      autoWahIsOn: false,
-      bitCrusher: bitCrusher,
-      bitCrusherIsOn: false,
-      chebyshev: chebyshev,
-      chebyshevIsOn: false,
-      chorus: chorus,
-      chorusIsOn: false,
-      convolver: convolver,
-      convolverIsOn: false,
-      effect: effect,
-      effectIsOn: false,
-      feedbackEffect: feedbackEffect,
-      feedbackEffectIsOn: false,
-      freeverb: freeverb,
-      freeverbIsOn: false,
-      jcReverb: jcReverb,
-      jcReverbIsOn: false,
-      phaser: phaser,
-      phaserIsOn: false,
-      pingPongDelay: pingPongDelay,
-      pingPongDelayIsOn: false,
-      pitchShift: pitchShift,
-      pitchShiftIsOn: false,
-      reverb: reverb,
-      reverbIsOn: false,
-      stereoWidener: stereoWidener,
-      stereoWidenerIsOn: false,
-      vibrato: vibrato,
-      vibratoIsOn: false
-    }
+    autoFilter.wet.value = 0
+    feedbackDelay.wet.value = 0
+    tremolo.wet.value = 0
+    distortion.wet.value = 0
+    autoPanner.wet.value = 0
+    autoWah.wet.value = 0
+    bitCrusher.wet.value = 0
+    chebyshev.wet.value = 0
+    chorus.wet.value = 0
+    convolver.wet.value = 0
+    feedbackEffect.wet.value = 0
+    freeverb.wet.value = 0
+    jcReverb.wet.value = 0
+    phaser.wet.value = 0
+    pingPongDelay.wet.value = 0
+    pitchShift.wet.value = 0
+    reverb.wet.value = 0
+    stereoWidener.wet.value = 0
+    vibrato.wet.value = 0
 
-    this.startSynth = this.startSynth.bind(this)
-    this.toggleFilter = this.toggleFilter.bind(this)
-    this.toggleFeedbackDelay = this.toggleFeedbackDelay.bind(this)
-    this.toggleTremolo = this.toggleTremolo.bind(this)
-    this.toggleDistortion = this.toggleDistortion.bind(this)
-    this.toggleAutoPanner = this.toggleAutoPanner.bind(this)
-    this.toggleAutoWah = this.toggleAutoWah.bind(this)
-    this.toggleBitCrusher = this.toggleBitCrusher.bind(this)
-    this.toggleChebyshev = this.toggleChebyshev.bind(this)
-    this.toggleChorus = this.toggleChorus.bind(this)
-    this.toggleConvolver = this.toggleConvolver.bind(this)
-    this.toggleEffect = this.toggleEffect.bind(this)
-    this.toggleFeedbackEffect = this.toggleFeedbackEffect.bind(this)
-    this.toggleFreeverb = this.toggleFreeverb.bind(this)
-    this.toggleJcReverb = this.toggleJcReverb.bind(this)
-    this.togglePhaser = this.togglePhaser.bind(this)
-    this.togglePingPongDelay = this.togglePingPongDelay.bind(this)
-    this.togglePitchShift = this.togglePitchShift.bind(this)
-    this.toggleReverb = this.toggleReverb.bind(this)
-    this.toggleStereoWidener = this.toggleStereoWidener.bind(this)
-    this.toggleVibrato = this.toggleVibrato.bind(this)
-  }
+    let synth = new Tone.PolySynth()
 
-  startSynth() {
-    let synth = new Tone.Synth().toMaster()
     synth.chain(
-      this.state.autoFilter,
-      this.state.feedbackDelay,
-      this.state.tremolo,
-      this.state.distortion,
-      this.state.autoPanner,
-      this.state.autoWah,
-      this.state.bitCrusher,
-      this.state.chebyshev,
-      this.state.chorus,
-      this.state.convolver,
-      this.state.effect,
-      this.state.feedbackEffect,
-      this.state.freeverb,
-      this.state.jcReverb,
-      this.state.phaser,
-      this.state.pingPongDelay,
-      this.state.pitchShift,
-      this.state.reverb,
-      this.state.stereoWidener,
-      this.state.vibrato,
+      autoFilter,
+      feedbackDelay,
+      tremolo,
+      distortion,
+      autoPanner,
+      autoWah,
+      bitCrusher,
+      chebyshev,
+      chorus,
+      convolver,
+      feedbackEffect,
+      freeverb,
+      jcReverb,
+      phaser,
+      pingPongDelay,
+      pitchShift,
+      reverb,
+      stereoWidener,
+      vibrato,
       Tone.Master
     )
 
-    this.setState({
-      synth: synth
-    })
+    let loop1 = new Tone.Loop(function(time) {
+      synth.triggerAttackRelease('C2', '8n', time)
+    }, '4n')
 
-    let loop = new Tone.Loop(function(time) {
-      synth.triggerAttackRelease('C3', '4n', time)
-    }, '5n')
+    let loop2 = new Tone.Loop(function(time) {
+      synth.triggerAttackRelease('E2', '32n', time)
+    }, '32n')
 
-    loop.start('0m').stop('16m')
+    let loop3 = new Tone.Loop(function(time) {
+      synth.triggerAttackRelease('D2', '1n', time)
+    }, '1n')
 
-    Tone.Transport.bpm.value = 200
+    let loop4 = new Tone.Loop(function(time) {
+      synth.triggerAttackRelease('A2', '16n', time)
+    }, '16n')
+
+    this.state = {
+      lastChange: {
+        randomDelay: 100,
+        lastChange: Date.now()
+      },
+      autoFilter: {
+        effect: autoFilter,
+        wet: 0,
+        on: false
+      },
+      feedbackDelay: {
+        effect: feedbackDelay,
+        wet: 0,
+        on: false
+      },
+      tremolo: {
+        effect: tremolo,
+        wet: 0,
+        on: false
+      },
+      distortion: {
+        effect: distortion,
+        wet: 0,
+        on: false
+      },
+      autoPanner: {
+        effect: autoPanner,
+        wet: 0,
+        on: false
+      },
+      autoWah: {
+        effect: autoWah,
+        wet: 0,
+        on: false
+      },
+      bitCrusher: {
+        effect: bitCrusher,
+        wet: 0,
+        on: false
+      },
+      chebyshev: {
+        effect: chebyshev,
+        wet: 0,
+        on: false
+      },
+      chorus: {
+        effect: chorus,
+        wet: 0,
+        on: false
+      },
+      convolver: {
+        effect: convolver,
+        wet: 0,
+        on: false
+      },
+      feedbackEffect: {
+        effect: feedbackEffect,
+        wet: 0,
+        on: false
+      },
+      freeverb: {
+        effect: freeverb,
+        wet: 0,
+        on: false
+      },
+      jcReverb: {
+        effect: jcReverb,
+        wet: 0,
+        on: false
+      },
+      phaser: {
+        effect: phaser,
+        wet: 0,
+        on: false
+      },
+      pingPongDelay: {
+        effect: pingPongDelay,
+        wet: 0,
+        on: false
+      },
+      pitchShift: {
+        effect: pitchShift,
+        wet: 0,
+        on: false
+      },
+      reverb: {
+        effect: reverb,
+        wet: 0,
+        on: false
+      },
+      stereoWidener: {
+        effect: stereoWidener,
+        wet: 0,
+        on: false
+      },
+      vibrato: {
+        effect: vibrato,
+        wet: 0,
+        on: false
+      },
+      synth: {
+        instrument: synth,
+        on: false
+      },
+      loop1: {
+        loop: loop1,
+        on: false
+      },
+      loop2: {
+        loop: loop2,
+        on: false
+      },
+      loop3: {
+        loop: loop3,
+        on: false
+      },
+      loop4: {
+        loop: loop4,
+        on: false
+      }
+    }
+
+    _.bindAll(
+      this,
+      'toggleLoop',
+      'toggleEffect',
+      'changeEffectWetValue',
+      'changeDistortionValue',
+      'changeStereoWidenerValue'
+    )
+
+    Tone.Transport.bpm.value = 20
     Tone.Transport.start()
   }
 
-  toggleFilter() {
-    if (this.state.autoFilterIsOn) {
-      this.state.autoFilter.wet.value = 0
-    } else {
-      this.state.autoFilter.wet.value = 1
+  //this.setState({
+  //synth: synth
+  //})
+
+  componentDidMount() {}
+
+  getRandomArbitrary(max, min) {
+    return Math.floor(Math.random() * (max - min)) + min
+  }
+
+  generateRandom() {
+    const { lastChange, randomDelay } = this.state
+
+    if (Date.now() - lastChange >= randomDelay) {
+      this.setState({
+        lastChange: Date.now(),
+        randomDelay: this.getRandomArbitrary(100, 3000)
+      })
     }
+  }
+
+  toggleLoop(loopName) {
+    let { loop, on } = this.state[loopName]
+
+    on == true ? loop.stop() : loop.start('0m')
 
     this.setState({
-      autoFilterIsOn: !this.state.autoFilterIsOn
+      [`${loopName}`]: {
+        loop: loop,
+        on: !on
+      }
     })
   }
 
-  toggleFeedbackDelay() {
-    if (this.state.feedbackDelayIsOn) {
-      this.state.feedbackDelay.wet.value = 0
-    } else {
-      this.state.feedbackDelay.wet.value = 1
-    }
+  toggleEffect(effectName) {
+    let { effect, wet, on } = this.state[effectName]
+
+    effect.wet.value = on == true ? 0 : wet
+
+    on = !on
 
     this.setState({
-      feedbackDelayIsOn: !this.state.feedbackDelayIsOn
+      [`${effectName}`]: {
+        effect,
+        wet,
+        on
+      }
     })
   }
 
-  toggleTremolo() {
-    if (this.state.tremoloIsOn) {
-      this.state.tremolo.wet.value = 0
-    } else {
-      this.state.tremolo.wet.value = 1
-    }
+  changeEffectWetValue(effectName, value) {
+    let { effect, wet, on } = this.state[effectName]
+
+    effect.wet.value = on == true ? value : 0
+
+    wet = value
 
     this.setState({
-      tremoloIsOn: !this.state.tremoloIsOn
+      [`${effectName}`]: {
+        effect,
+        wet,
+        on
+      }
     })
   }
 
-  toggleDistortion() {
-    if (this.state.distortionIsOn) {
-      this.state.distortion.wet.value = 0
-    } else {
-      this.state.distortion.wet.value = 1
-    }
+  changeDistortionValue(effectName, value) {
+    let { effect, wet, on } = this.state.distortion
+
+    effect.distortion = value
 
     this.setState({
-      distortionIsOn: !this.state.distortionIsOn
+      distortion: {
+        effect,
+        wet,
+        on
+      }
     })
   }
 
-  toggleAutoPanner() {
-    if (this.state.autoPannerIsOn) {
-      this.state.autoPanner.wet.value = 0
-    } else {
-      this.state.autoPanner.wet.value = 1
-    }
+  changeStereoWidenerValue(value) {
+    let { effect, wet, on } = this.state.stereoWidener
+
+    effect.stereoWidener = value
 
     this.setState({
-      autoPannerIsOn: !this.state.autoPannerIsOn
-    })
-  }
-
-  toggleAutoWah() {
-    if (this.state.autoWahIsOn) {
-      this.state.autoWah.wet.value = 0
-    } else {
-      this.state.autoWah.wet.value = 1
-    }
-
-    this.setState({
-      autoWahIsOn: !this.state.autoWahIsOn
-    })
-  }
-
-  toggleBitCrusher() {
-    if (this.state.bitCrusherIsOn) {
-      this.state.bitCrusher.wet.value = 0
-    } else {
-      this.state.bitCrusher.wet.value = 1
-    }
-
-    this.setState({
-      bitCrusherIsOn: !this.state.bitCrusherIsOn
-    })
-  }
-
-  toggleChebyshev() {
-    if (this.state.chebyshevIsOn) {
-      this.state.chebyshev.wet.value = 0
-    } else {
-      this.state.chebyshev.wet.value = 1
-    }
-
-    this.setState({
-      chebyshevIsOn: !this.state.chebyshevIsOn
-    })
-  }
-
-  toggleChorus() {
-    if (this.state.chorusIsOn) {
-      this.state.chorus.wet.value = 0
-    } else {
-      this.state.chorus.wet.value = 1
-    }
-
-    this.setState({
-      chorusIsOn: !this.state.chorusIsOn
-    })
-  }
-
-  toggleConvolver() {
-    if (this.state.convolverIsOn) {
-      this.state.convolver.wet.value = 0
-    } else {
-      this.state.convolver.wet.value = 1
-    }
-
-    this.setState({
-      convolverIsOn: !this.state.convolverIsOn
-    })
-  }
-
-  toggleEffect() {
-    if (this.state.effectIsOn) {
-      this.state.effect.wet.value = 0
-    } else {
-      this.state.effect.wet.value = 1
-    }
-
-    this.setState({
-      effectIsOn: !this.state.effectIsOn
-    })
-  }
-
-  toggleFeedbackEffect() {
-    if (this.state.feedbackEffectIsOn) {
-      this.state.feedbackEffect.wet.value = 0
-    } else {
-      this.state.feedbackEffect.wet.value = 1
-    }
-
-    this.setState({
-      feedbackEffectIsOn: !this.state.feedbackEffectIsOn
-    })
-  }
-
-  toggleFreeverb() {
-    if (this.state.freeverbIsOn) {
-      this.state.freeverb.wet.value = 0
-    } else {
-      this.state.freeverb.wet.value = 1
-    }
-
-    this.setState({
-      freeverbIsOn: !this.state.freeverbIsOn
-    })
-  }
-
-  toggleJcReverb() {
-    if (this.state.jcReverbbIsOn) {
-      this.state.jcReverb.wet.value = 0
-    } else {
-      this.state.jcReverb.wet.value = 1
-    }
-
-    this.setState({
-      jcReverbbIsOn: !this.state.jcReverbbIsOn
-    })
-  }
-
-  togglePhaser() {
-    if (this.state.phaserIsOn) {
-      this.state.phaser.wet.value = 0
-    } else {
-      this.state.phaser.wet.value = 1
-    }
-
-    this.setState({
-      phaserIsOn: !this.state.phaserIsOn
-    })
-  }
-
-  togglePingPongDelay() {
-    if (this.state.pingPongDelayIsOn) {
-      this.state.pingPongDelay.wet.value = 0
-    } else {
-      this.state.pingPongDelay.wet.value = 1
-    }
-
-    this.setState({
-      pingPongDelayIsOn: !this.state.pingPongDelayIsOn
-    })
-  }
-
-  togglePitchShift() {
-    if (this.state.pitchShiftIsOn) {
-      this.state.pitchShift.wet.value = 0
-    } else {
-      this.state.pitchShift.wet.value = 1
-    }
-
-    this.setState({
-      pitchShiftIsOn: !this.state.pitchShiftIsOn
-    })
-  }
-
-  toggleReverb() {
-    if (this.state.reverbIsOn) {
-      this.state.reverb.wet.value = 0
-    } else {
-      this.state.reverb.wet.value = 1
-    }
-
-    this.setState({
-      reverbIsOn: !this.state.reverbIsOn
-    })
-  }
-
-  toggleStereoWidener() {
-    if (this.state.stereoWidenerIsOn) {
-      this.state.stereoWidener.wet.value = 0
-    } else {
-      this.state.stereoWidener.wet.value = 1
-    }
-
-    this.setState({
-      stereoWidenerIsOn: !this.state.stereoWidenerIsOn
-    })
-  }
-
-  toggleVibrato() {
-    if (this.state.vibratoIsOn) {
-      this.state.vibrato.wet.value = 0
-    } else {
-      this.state.vibrato.wet.value = 1
-    }
-
-    this.setState({
-      vibratoIsOn: !this.state.vibratoIsOn
+      stereoWidener: {
+        effect,
+        wet,
+        on
+      }
     })
   }
 
   render() {
+    let {
+      distortion,
+      synth,
+      stereoWidener,
+      loop1,
+      loop2,
+      loop3,
+      loop4
+    } = this.state
+    let { toggleEffect } = this
+
     return (
       <div className="container">
-        <div onClick={this.startSynth} className="button">
-          Start Synth
+        <div className="row">
+          <PlaySwitch
+            name="play"
+            value={loop1.on}
+            handleToggleClick={() => this.toggleLoop('loop1')}
+          />
+          <PlaySwitch
+            name="play"
+            value={loop2.on}
+            handleToggleClick={() => this.toggleLoop('loop2')}
+          />
+          <PlaySwitch
+            name="play"
+            value={loop3.on}
+            handleToggleClick={() => this.toggleLoop('loop3')}
+          />
+          <PlaySwitch
+            name="play"
+            value={loop4.on}
+            handleToggleClick={() => this.toggleLoop('loop4')}
+          />
+
+          <h1 className="synthName">Super Synth 3000</h1>
         </div>
-        <div onClick={this.toggleFilter} className="button">
-          Toggle Filter ({this.state.autoFilterIsOn.toString()})
-        </div>
-        <div onClick={this.toggleFeedbackDelay} className="button">
-          Toggle Feedback Delay ({this.state.feedbackDelayIsOn.toString()})
-        </div>
-        <div onClick={this.toggleTremolo} className="button">
-          Toggle Tremolo ({this.state.tremoloIsOn.toString()})
-        </div>
-        <div onClick={this.toggleDistortion} className="button">
-          Toggle Distortion ({this.state.distortionIsOn.toString()})
-        </div>
-        <div onClick={this.toggleAutoPanner} className="button">
-          Toggle Auto Panner ({this.state.autoPannerIsOn.toString()})
-        </div>
-        <div onClick={this.toggleAutoWah} className="button">
-          Toggle Auto Wah ({this.state.autoWahIsOn.toString()})
-        </div>
-        <div onClick={this.toggleBitCrusher} className="button">
-          Toggle Bit Crusher ({this.state.bitCrusherIsOn.toString()})
-        </div>
-        <div onClick={this.toggleChebyshev} className="button">
-          Toggle Chebyshev ({this.state.chebyshevIsOn.toString()})
-        </div>
-        <div onClick={this.toggleChorus} className="button">
-          Toggle Chorus ({this.state.chorusIsOn.toString()})
-        </div>
-        <div onClick={this.toggleConvolver} className="button">
-          Toggle Convolver ({this.state.convolverIsOn.toString()})
-        </div>
-        <div onClick={this.toggleEffect} className="button">
-          Toggle Effect ({this.state.effectIsOn.toString()})
-        </div>
-        <div onClick={this.toggleFeedbackEffect} className="button">
-          Toggle Feedback Effect ({this.state.feedbackEffectIsOn.toString()})
-        </div>
-        <div onClick={this.toggleFreeverb} className="button">
-          Toggle Freeverb ({this.state.freeverbIsOn.toString()})
-        </div>
-        <div onClick={this.toggleJcReverb} className="button">
-          Toggle Jc Reverb ({this.state.jcReverbIsOn.toString()})
-        </div>
-        <div onClick={this.togglePhaser} className="button">
-          Toggle Phaser ({this.state.phaserIsOn.toString()})
-        </div>
-        <div onClick={this.togglePingPongDelay} className="button">
-          Toggle Ping Pong Delay ({this.state.pingPongDelayIsOn.toString()})
-        </div>
-        <div onClick={this.togglePitchShift} className="button">
-          Toggle Pitch Shift ({this.state.pitchShiftIsOn.toString()})
-        </div>
-        <div onClick={this.toggleReverb} className="button">
-          Toggle Reverb ({this.state.reverbIsOn.toString()})
-        </div>
-        <div onClick={this.toggleStereoWidener} className="button">
-          Toggle Stereo Widener ({this.state.stereoWidenerIsOn.toString()})
-        </div>
-        <div onClick={this.toggleVibrato} className="button">
-          Toggle Vibrato ({this.state.vibratoIsOn.toString()})
-        </div>
+
+        <Distortion
+          {...this.state.distortion}
+          toggleEffect={() => toggleEffect('distortion')}
+          changeEffectWetValue={this.changeEffectWetValue}
+          changeDistortionValue={this.changeDistortionValue}
+        />
+
+        <FeedbackDelay
+          {...this.state.feedbackDelay}
+          toggleEffect={() => toggleEffect('feedbackDelay')}
+          changeEffectWetValue={this.changeEffectWetValue}
+          changeFeedbackDelayValue={this.changeFeedbackDelayValue}
+        />
+
+        <Chorus
+          {...this.state.chorus}
+          toggleEffect={() => toggleEffect('chorus')}
+          changeEffectWetValue={this.changeEffectWetValue}
+          changeFeedbackDelayValue={this.changeChorusValue}
+        />
+
+        <Reverb
+          {...this.state.reverb}
+          toggleEffect={() => toggleEffect('reverb')}
+          changeEffectWetValue={this.changeEffectWetValue}
+          changeFeedbackDelayValue={this.changeReverbValue}
+        />
       </div>
     )
   }
