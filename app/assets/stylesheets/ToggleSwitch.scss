@@ -1,0 +1,27 @@
+.buttonName {
+  font-family: 'Sporting Grotesque';
+  text-align: center;
+  font-size: 12px;
+  position: relative;
+  top: -10px;
+}
+
+.ToggleSwitch {
+  display: inline-block;
+  width: 120px;
+  height: 60px;
+  background: #fff;
+  border-radius: 6px;
+  border: 2px solid #dedede;
+  transition: all 0.2s ease;
+  // margin-right: 80px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.on {
+    background: #ffcfe0;
+    border: 2px solid #d63c65;
+  }
+}
