@@ -3,6 +3,7 @@ import React from 'react'
 import Tone from 'tone'
 
 import PlaySwitch from '../components/PlaySwitch'
+
 import Distortion from '../components/effects/Distortion'
 
 export default class Synth extends React.Component {
@@ -332,7 +333,22 @@ export default class Synth extends React.Component {
   //synth: synth
   //})
 
-  componentDidMount() {}
+  componentDidMount() {
+    let { name, effect, wet, on } = this.state.Distortion
+
+    effect.wet.value = on == true ? this.props.wet : 0
+    effect.oversample = this.props.oversample
+    effect.distortion = this.props.distortion
+
+    this.setState({
+      distortion: {
+        name,
+        effect,
+        wet: this.props.wet,
+        on
+      }
+    })
+  }
 
   getRandomArbitrary(max, min) {
     return Math.floor(Math.random() * (max - min)) + min
@@ -357,7 +373,7 @@ export default class Synth extends React.Component {
     this.setState({
       [`${loopName}`]: {
         loop: loop,
-        on: !on
+        on: on
       }
     })
   }
@@ -367,7 +383,7 @@ export default class Synth extends React.Component {
 
     effect.wet.value = on == true ? 0 : wet
 
-    on = !on
+    on = on
 
     this.setState({
       [`${effectName}`]: {
@@ -382,7 +398,6 @@ export default class Synth extends React.Component {
     let { effect, wet, on } = this.state[effectName]
 
     effect.wet.value = on == true ? value : 0
-
     wet = value
 
     this.setState({
